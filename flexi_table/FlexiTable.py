@@ -87,12 +87,10 @@ Keyword arguments:
     Optional title displayed in the toolbar.
 
 - totalCols (list of strings; optional):
-    Columns to total in the footer. Defaults to `aggrCols` when
-    omitted.
+    Columns to total in the footer. Defaults to every numeric column.
 
 - totalFunction (a value equal to: 'sum', 'mean'; optional):
-    Aggregation function for the footer row. Defaults to
-    `aggrFunction`.
+    Aggregation function for the footer row. Defaults to `'sum'`.
 
 - totalLabel (string; default 'Total'):
     Label rendered in the first column of the totals footer."""

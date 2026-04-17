@@ -135,8 +135,6 @@ def update_table(level1_group, level2_group, aggr_function):
         aggrCols=['vega', 'iv'],
         conditionalStyles=conditional_styles,
         showTotals=True,
-        totalCols=['vega', 'iv'],
-        totalFunction='sum',
         totalLabel='Grand total',
         stickyFooter=True,
     )

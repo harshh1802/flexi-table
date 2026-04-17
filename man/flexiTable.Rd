@@ -68,9 +68,9 @@ those elements have the following types:
 
 \item{title}{Character. Optional title displayed in the toolbar.}
 
-\item{totalCols}{List of characters. Columns to total in the footer. Defaults to `aggrCols` when omitted.}
+\item{totalCols}{List of characters. Columns to total in the footer. Defaults to every numeric column.}
 
-\item{totalFunction}{A value equal to: 'sum', 'mean'. Aggregation function for the footer row. Defaults to `aggrFunction`.}
+\item{totalFunction}{A value equal to: 'sum', 'mean'. Aggregation function for the footer row. Defaults to `'sum'`.}
 
 \item{totalLabel}{Character. Label rendered in the first column of the totals footer.}
 }

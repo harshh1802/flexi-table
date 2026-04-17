@@ -145,19 +145,19 @@ const FlexiTable = ({
         );
     }, [data, query]);
 
-    const resolvedTotalCols = useMemo(
-        () => (totalCols && totalCols.length ? totalCols : aggrCols),
-        [totalCols, aggrCols]
-    );
+    const resolvedTotalCols = useMemo(() => {
+        if (totalCols && totalCols.length) return totalCols;
+        return Array.from(numericColumns);
+    }, [totalCols, numericColumns]);
 
     const totals = useMemo(() => {
         if (!showTotals || !resolvedTotalCols.length) return null;
-        const fn = aggregations[totalFunction || aggrFunction] || aggregations.sum;
+        const fn = aggregations[totalFunction || 'sum'] || aggregations.sum;
         return resolvedTotalCols.reduce((acc, col) => {
             acc[col] = fn(filteredData.map((r) => r[col]));
             return acc;
         }, {});
-    }, [showTotals, resolvedTotalCols, filteredData, aggregations, totalFunction, aggrFunction]);
+    }, [showTotals, resolvedTotalCols, filteredData, aggregations, totalFunction]);
 
     const fmtNumber = useCallback(
         (n) => {
@@ -968,9 +968,9 @@ FlexiTable.propTypes = {
     numberFormat: PropTypes.func,
     /** Show a grand-totals footer row beneath the table. */
     showTotals: PropTypes.bool,
-    /** Columns to total in the footer. Defaults to `aggrCols` when omitted. */
+    /** Columns to total in the footer. Defaults to every numeric column. */
     totalCols: PropTypes.arrayOf(PropTypes.string),
-    /** Aggregation function for the footer row. Defaults to `aggrFunction`. */
+    /** Aggregation function for the footer row. Defaults to `'sum'`. */
     totalFunction: PropTypes.oneOf(['sum', 'mean']),
     /** Label rendered in the first column of the totals footer. */
     totalLabel: PropTypes.string,

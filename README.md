@@ -161,9 +161,9 @@ individual cells).
 
 | Prop | Type | Default | Description |
 | ---- | ---- | ------- | ----------- |
-| `showTotals` | `bool` | `False` | Render a `<tfoot>` row beneath the table. |
-| `totalCols` | `list[str] \| None` | falls back to `aggrCols` | Columns to total. |
-| `totalFunction` | `'sum' \| 'mean' \| None` | falls back to `aggrFunction` | Aggregation used for the footer. |
+| `showTotals` | `bool` | `False` | Render a `<tfoot>` row beneath the table. By default, every numeric column is summed. |
+| `totalCols` | `list[str] \| None` | all numeric columns | Override which columns to total. |
+| `totalFunction` | `'sum' \| 'mean' \| None` | `'sum'` | Override the aggregation function used for the footer. |
 | `totalLabel` | `str` | `'Total'` | Label placed in the first column of the footer. |
 | `stickyFooter` | `bool` | `False` | Pins the footer to the bottom while the table body scrolls. |
 

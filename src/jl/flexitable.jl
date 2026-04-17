@@ -39,8 +39,8 @@ Those elements have the following types:
 - `stripe` (Bool; optional): Whether zebra striping is applied to data rows.
 - `theme` (a value equal to: 'light', 'dark'; optional): Visual theme.
 - `title` (String; optional): Optional title displayed in the toolbar.
-- `totalCols` (Array of Strings; optional): Columns to total in the footer. Defaults to `aggrCols` when omitted.
-- `totalFunction` (a value equal to: 'sum', 'mean'; optional): Aggregation function for the footer row. Defaults to `aggrFunction`.
+- `totalCols` (Array of Strings; optional): Columns to total in the footer. Defaults to every numeric column.
+- `totalFunction` (a value equal to: 'sum', 'mean'; optional): Aggregation function for the footer row. Defaults to `'sum'`.
 - `totalLabel` (String; optional): Label rendered in the first column of the totals footer.
 """
 function flexitable(; kwargs...)
