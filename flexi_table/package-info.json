@@ -2,9 +2,9 @@
   "name": "flexi_table",
   "version": "0.0.7",
   "description": "Flexible table with row grouping",
-"repository": {
+  "repository": {
     "type": "git",
-    "url": "git://github.com/harshh1802/flexi-table.git"
+    "url": "https://github.com/harshh1802/flexi-table.git"
   },
   "bugs": {
     "url": "https://github.com/harshh1802/flexi-table/issues"
@@ -22,8 +22,9 @@
     "build:activated": "npm run build:js && npm run build:backends-activated"
   },
   "author": "Harsh Navadiya <blackcodetechnology@gmail.com>",
-  "license": "",
+  "license": "MIT",
   "dependencies": {
+    "lucide-react": "^0.544.0",
     "ramda": "^0.26.1"
   },
   "devDependencies": {
@@ -47,6 +48,7 @@
     "react-dom": "^16.8.6",
     "style-loader": "^3.3.3",
     "styled-jsx": "^3.2.1",
+    "tailwindcss": "^4.1.13",
     "webpack": "^5.84.1",
     "webpack-cli": "^5.1.1",
     "webpack-dev-server": "^4.15.0"

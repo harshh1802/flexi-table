@@ -1,100 +1,280 @@
-# flexi table
+# FlexiTable
 
-flexi table is a Dash component library.
+A Dash component for hierarchical data tables with row grouping, automatic
+aggregation, conditional styling, and an enterprise-grade UI. Designed for
+finance, analytics, and operations dashboards where rows need to collapse into
+groups, numbers need to line up, and totals need to be clearly visible.
 
-color code for styling must be in lowercase.
+---
 
-Flexible table with row grouping
+## Contents
 
-Get started with:
-1. Install Dash and its dependencies: https://dash.plotly.com/installation
-2. Run `python usage.py`
-3. Visit http://localhost:8050 in your web browser
+- [Features](#features)
+- [Install](#install)
+- [Quick start](#quick-start)
+- [Props reference](#props-reference)
+  - [Data](#data)
+  - [Grouping & aggregation](#grouping--aggregation)
+  - [Conditional styling](#conditional-styling)
+  - [Totals footer](#totals-footer)
+  - [Toolbar](#toolbar)
+  - [Appearance](#appearance)
+  - [Two-way binding](#two-way-binding)
+- [Usage examples](#usage-examples)
+- [Development](#development)
+- [License](#license)
 
-## Contributing
+---
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md)
+## Features
 
-### Install dependencies
+- **Hierarchical grouping** — up to two levels of row grouping (`level1Group`,
+  `level2Group`) with click-to-expand / collapse and full keyboard control.
+- **Automatic aggregation** — `sum` or `mean` of any columns, displayed on
+  group header rows.
+- **Grand-totals footer** — optional `<tfoot>` row with summed (or averaged)
+  values for any columns; respects the active search filter.
+- **Conditional styling** — declarative per-cell styling based on value
+  comparisons (`>`, `<`, `>=`, `<=`, `==`, `!=`). Applies to group rows,
+  aggregation cells, and the totals footer.
+- **Search** — toolbar search filters rows across all columns.
+- **CSV export** — one-click download of the underlying data.
+- **Density toggle** — comfortable / compact.
+- **Theming** — light and dark themes built on CSS variables.
+- **Sticky header & footer** — for long tables in scroll containers.
+- **Accessibility** — `role="treegrid"`, `aria-expanded` on group rows,
+  keyboard toggle (Enter / Space), visible focus ring, tabular-numeral
+  alignment for numeric columns.
+- **Zero runtime overhead** — no virtualization dependency, no CSS frameworks;
+  a single `<style>` block scoped to the component.
 
-If you have selected install_dependencies during the prompt, you can skip this part.
+---
 
-1. Install npm packages
-    ```
-    $ npm install
-    ```
-2. Create a virtual env and activate.
-    ```
-    $ virtualenv venv
-    $ . venv/bin/activate
-    ```
-    _Note: venv\Scripts\activate for windows_
+## Install
 
-3. Install python packages required to build components.
-    ```
-    $ pip install -r requirements.txt
-    ```
-4. Install the python packages for testing (optional)
-    ```
-    $ pip install -r tests/requirements.txt
-    ```
+```bash
+pip install flexi_table
+```
 
-### Write your component code in `src/lib/components/FlexiTable.react.js`.
+Requires `dash>=2.0`. For the development build (from source) see
+[Development](#development).
 
-- The demo app is in `src/demo` and you will import your example component code into your demo app.
-- Test your code in a Python environment:
-    1. Build your code
-        ```
-        $ npm run build
-        ```
-    2. Run and modify the `usage.py` sample dash app:
-        ```
-        $ python usage.py
-        ```
-- Write tests for your component.
-    - A sample test is available in `tests/test_usage.py`, it will load `usage.py` and you can then automate interactions with selenium.
-    - Run the tests with `$ pytest tests`.
-    - The Dash team uses these types of integration tests extensively. Browse the Dash component code on GitHub for more examples of testing (e.g. https://github.com/plotly/dash-core-components)
-- Add custom styles to your component by putting your custom CSS files into your distribution folder (`flexi_table`).
-    - Make sure that they are referenced in `MANIFEST.in` so that they get properly included when you're ready to publish your component.
-    - Make sure the stylesheets are added to the `_css_dist` dict in `flexi_table/__init__.py` so dash will serve them automatically when the component suite is requested.
-- [Review your code](./review_checklist.md)
+---
 
-### Create a production build and publish:
+## Quick start
 
-1. Build your code:
-    ```
-    $ npm run build
-    ```
-2. Create a Python distribution
-    ```
-    $ python setup.py sdist bdist_wheel
-    ```
-    This will create source and wheel distribution in the generated the `dist/` folder.
-    See [PyPA](https://packaging.python.org/guides/distributing-packages-using-setuptools/#packaging-your-project)
-    for more information.
+```python
+from dash import Dash
+from flexi_table import FlexiTable
 
-3. Test your tarball by copying it into a new environment and installing it locally:
-    ```
-    $ pip install flexi_table-0.0.1.tar.gz
-    ```
+app = Dash(__name__)
 
-4. If it works, then you can publish the component to NPM and PyPI:
-    1. Publish on PyPI
-        ```
-        $ twine upload dist/*
-        ```
-    2. Cleanup the dist folder (optional)
-        ```
-        $ rm -rf dist
-        ```
-    3. Publish on NPM (Optional if chosen False in `publish_on_npm`)
-        ```
-        $ npm publish
-        ```
-        _Publishing your component to NPM will make the JavaScript bundles available on the unpkg CDN. By default, Dash serves the component library's CSS and JS locally, but if you choose to publish the package to NPM you can set `serve_locally` to `False` and you may see faster load times._
+data = [
+    {'region': 'Americas', 'country': 'USA',    'sales': 524300, 'profit': 152000},
+    {'region': 'Americas', 'country': 'Canada', 'sales': 418500, 'profit': 121000},
+    {'region': 'EMEA',     'country': 'Germany','sales': 612400, 'profit': 204000},
+    {'region': 'EMEA',     'country': 'France', 'sales': 456100, 'profit': 131500},
+    {'region': 'APAC',     'country': 'Japan',  'sales': 702900, 'profit': 251300},
+]
 
-5. Share your component with the community! https://community.plotly.com/c/dash
-    1. Publish this repository to GitHub
-    2. Tag your GitHub repository with the plotly-dash tag so that it appears here: https://github.com/topics/plotly-dash
-    3. Create a post in the Dash community forum: https://community.plotly.com/c/dash
+app.layout = FlexiTable(
+    id='revenue-table',
+    title='Global revenue',
+    description='Grouped by region and country.',
+    data=data,
+    level1Group='region',
+    level2Group='country',
+    aggrCols=['sales', 'profit'],
+    aggrFunction='sum',
+    showTotals=True,
+    totalLabel='Grand total',
+    searchable=True,
+    exportable=True,
+)
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+Open http://127.0.0.1:8050 and click a region to drill in.
+
+---
+
+## Props reference
+
+All props are keyword arguments to `FlexiTable(...)`. Camel-case names come from
+the underlying React component — use them as-is from Python.
+
+### Data
+
+| Prop | Type | Default | Description |
+| ---- | ---- | ------- | ----------- |
+| `id` | `str` | **required** | Dash component id. |
+| `data` | `list[dict]` | `[]` | Row objects. Columns are inferred from the first row's keys. |
+| `emptyMessage` | `str` | `'No data to display'` | Shown when `data` is empty or filtered to zero rows. |
+| `numberFormat` | `callable` | `Intl.NumberFormat` with 2 decimals | **JS-only.** If you're using Dash clientside callbacks, a function that receives the raw value and returns the display string. From pure Python, leave this unset. |
+
+### Grouping & aggregation
+
+| Prop | Type | Default | Description |
+| ---- | ---- | ------- | ----------- |
+| `level1Group` | `str \| None` | `None` | Column name to group by at the top level. |
+| `level2Group` | `str \| None` | `None` | Column name for the nested second-level grouping. |
+| `aggrCols` | `list[str]` | `[]` | Columns aggregated on group header rows. |
+| `aggrFunction` | `'sum' \| 'mean'` | `'sum'` | Aggregation used for group headers. |
+
+### Conditional styling
+
+`conditionalStyles` is a list of `{condition, style}` rules. The style is a CSS
+properties dict (camelCase keys), applied to any cell whose column and value
+satisfy the condition. Rules are applied in order, with later rules merging on
+top of earlier ones.
+
+```python
+conditionalStyles=[
+    {
+        'condition': {'columnName': 'vega', 'operator': '<', 'value': 0},
+        'style': {'color': '#b91c1c', 'fontWeight': 600},
+    },
+    {
+        'condition': {'columnName': 'vega', 'operator': '>=', 'value': 0},
+        'style': {'color': '#15803d'},
+    },
+]
+```
+
+| Operator | Matches |
+| -------- | ------- |
+| `>`      | cell value > `value` |
+| `<`      | cell value < `value` |
+| `>=`     | cell value ≥ `value` |
+| `<=`     | cell value ≤ `value` |
+| `==`     | strict equality |
+| `!=`     | strict inequality |
+
+Styles apply to data cells, group header aggregation cells, **and** the totals
+footer. To target only a specific layer, combine with operator thresholds that
+can't collide (e.g. level-1 totals live in a different numeric range from
+individual cells).
+
+### Totals footer
+
+| Prop | Type | Default | Description |
+| ---- | ---- | ------- | ----------- |
+| `showTotals` | `bool` | `False` | Render a `<tfoot>` row beneath the table. |
+| `totalCols` | `list[str] \| None` | falls back to `aggrCols` | Columns to total. |
+| `totalFunction` | `'sum' \| 'mean' \| None` | falls back to `aggrFunction` | Aggregation used for the footer. |
+| `totalLabel` | `str` | `'Total'` | Label placed in the first column of the footer. |
+| `stickyFooter` | `bool` | `False` | Pins the footer to the bottom while the table body scrolls. |
+
+Totals reflect the **currently filtered rows**: if `searchable=True` and the
+user types a query, totals update live.
+
+### Toolbar
+
+| Prop | Type | Default | Description |
+| ---- | ---- | ------- | ----------- |
+| `title` | `str \| None` | `None` | Rendered in the toolbar. The toolbar is hidden when no toolbar props are set. |
+| `description` | `str \| None` | `None` | Smaller subtitle below the title. |
+| `searchable` | `bool` | `False` | Shows a search input that filters across all cells. |
+| `exportable` | `bool` | `False` | Shows a "Export" button that downloads the data as CSV. |
+
+### Appearance
+
+| Prop | Type | Default | Description |
+| ---- | ---- | ------- | ----------- |
+| `density` | `'comfortable' \| 'compact'` | `'comfortable'` | Initial row density; user can toggle via the toolbar. |
+| `theme` | `'light' \| 'dark'` | `'light'` | Visual theme. Dark theme targets dark dashboards. |
+| `stickyHeader` | `bool` | `True` | Pins the header row while scrolling. |
+| `stripe` | `bool` | `True` | Zebra-stripes nested data rows. |
+
+### Two-way binding
+
+| Prop | Type | Default | Description |
+| ---- | ---- | ------- | ----------- |
+| `expandedGroups` | `dict[str, bool]` | `{}` | Controlled map of `groupKey → expanded`. Level-2 keys are `"{level1Key}-{level2Key}"`. |
+| `setProps` | callable | *(provided by Dash)* | Dash wires this automatically; the component pushes `expandedGroups` back so a Python callback can read the user's expansion state. |
+
+Reading expansion state from a callback:
+
+```python
+from dash import Input, Output, callback
+
+@callback(
+    Output('status', 'children'),
+    Input('revenue-table', 'expandedGroups'),
+)
+def show_state(expanded):
+    open_groups = [k for k, v in (expanded or {}).items() if v]
+    return f'{len(open_groups)} groups open'
+```
+
+---
+
+## Usage examples
+
+See [EXAMPLES.md](./EXAMPLES.md) for eight end-to-end recipes:
+
+1. Minimal ungrouped table
+2. Single-level grouping with totals
+3. Two-level nested grouping
+4. Conditional styling (heatmap-style)
+5. Search + CSV export
+6. Dark theme + compact density
+7. Interactive controls driving group/agg/totals from dropdowns
+8. Reading `expandedGroups` from a callback
+
+---
+
+## Development
+
+This package is a Dash component library. The JS source lives in
+`src/lib/components/` and is bundled into `flexi_table/flexi_table.min.js`;
+Python bindings are auto-generated into `flexi_table/FlexiTable.py` by
+`dash-generate-components`.
+
+### Setup
+
+```bash
+npm install
+
+python -m venv venv
+# Unix / macOS
+source venv/bin/activate
+# Windows (PowerShell)
+.\venv\Scripts\Activate.ps1
+
+pip install -r requirements.txt
+```
+
+### Iterate
+
+Edit the React source at
+[src/lib/components/FlexiTable.react.js](src/lib/components/FlexiTable.react.js)
+and the demo harness at [src/demo/App.js](src/demo/App.js), then:
+
+```bash
+# Hot-reloading JS-only demo
+npm start          # http://localhost:8080
+
+# Or: rebuild the bundle and the Python bindings for use from Dash
+npm run build:js
+dash-generate-components ./src/lib/components flexi_table -p package-info.json \
+    --r-prefix '' --jl-prefix '' --ignore "\.test\."
+
+python dash_app.py # http://127.0.0.1:8050
+```
+
+### Publish
+
+```bash
+npm run build
+python setup.py sdist bdist_wheel
+twine upload dist/*
+```
+
+---
+
+## License
+
+MIT. See [LICENSE](./LICENSE).
