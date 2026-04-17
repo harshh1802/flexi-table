@@ -1,0 +1,13 @@
+Package: flexiTable
+Title: Flexible table with row grouping
+Version: 0.0.7
+Description: Flexible table with row grouping
+Depends: R (>= 3.0.2)
+Imports: 
+Suggests: 
+License: MIT + file LICENSE
+URL: https://github.com/harshh1802/flexi-table
+BugReports: https://github.com/harshh1802/flexi-table/issues
+Encoding: UTF-8
+LazyData: true
+KeepSource: true

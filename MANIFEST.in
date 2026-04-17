@@ -1,0 +1,11 @@
+include flexi_table/flexi_table.min.js
+include flexi_table/flexi_table.min.js.map
+include flexi_table/async-*.js
+include flexi_table/async-*.js.map
+include flexi_table/*-shared.js
+include flexi_table/*-shared.js.map
+include flexi_table/metadata.json
+include flexi_table/package-info.json
+include README.md
+include LICENSE
+include package.json
